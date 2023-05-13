@@ -73,8 +73,6 @@ defmodule SchoolAppWeb.GoalLive do
     <CustomComponents.link_button link={@link_sg.link} icon={@link_sg.icon}>
       <%= @link_sg.name %>
     </CustomComponents.link_button>
-
-    <%!-- <pre><%= inspect assigns, pretty: true %></pre> --%>
     """
   end
 
