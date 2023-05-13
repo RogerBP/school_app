@@ -1,5 +1,3 @@
-Students / Goals
-
 Students -> 
     Colocar grade na edição
     Implementar index com consulta
