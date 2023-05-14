@@ -27,16 +27,24 @@ defmodule SchoolApp.Students do
       name: "Students",
       item_title: "Student",
       form_rec_id: "student",
-      changeset_fn: &SchoolApp.Students.changeset(&1, &2),
-      update_fn: &SchoolApp.Students.update(&1, &2),
-      create_fn: &SchoolApp.Students.create(&1),
-      delete_fn: &SchoolApp.Students.delete(&1),
-      get_rec_fn: &SchoolApp.Students.get_record!(&1),
-      list_records: &SchoolApp.Students.list/0,
+      changeset_fn: &changeset(&1, &2),
+      update_fn: &update_record(&1, &2),
+      create_fn: &create(&1),
+      delete_fn: &delete(&1),
+      get_rec_fn: &get_record!(&1),
+      list_records: &list/0,
       schema: %SchoolApp.Database.Student{},
+      index_list_base: &index_list_base/0,
+      index_cols: [:avatar, :name, :grade_name],
       form_cols: [
         %{fieldname: :code, label: "Code"},
-        %{fieldname: :name, label: "Name"}
+        %{fieldname: :name, label: "Name"},
+        %{
+          fieldname: :grade_id,
+          label: "Grade",
+          type: "select",
+          options_fn: &SchoolApp.Grades.web_options_list/0
+        }
       ]
     }
   end
@@ -62,7 +70,7 @@ defmodule SchoolApp.Students do
     |> Repo.insert()
   end
 
-  def update(%Student{} = record, attrs) do
+  def update_record(%Student{} = record, attrs) do
     record
     |> Student.changeset(attrs)
     |> Repo.update()
@@ -79,5 +87,18 @@ defmodule SchoolApp.Students do
       avatar: Faker.Avatar.image_url(100, 100),
       grade_id: :rand.uniform(10) + 1
     })
+  end
+
+  def index_list_base do
+    from students in "students",
+      left_join: grades in "grades",
+      on: students.grade_id == grades.id,
+      select: %{
+        id: students.id,
+        name: students.name,
+        grade_name: grades.name,
+        avatar: students.avatar
+      },
+      order_by: students.name
   end
 end

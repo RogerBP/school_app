@@ -13,13 +13,13 @@ defmodule SchoolApp.TeachersGrades do
       name: "Teachers / Grades",
       item_title: "",
       form_rec_id: "teacher_grade",
-      changeset_fn: &SchoolApp.TeachersGrades.changeset(&1, &2),
-      update_fn: &SchoolApp.TeachersGrades.update(&1, &2),
-      create_fn: &SchoolApp.TeachersGrades.create(&1),
-      delete_fn: &SchoolApp.TeachersGrades.delete(&1),
-      get_rec_fn: &SchoolApp.TeachersGrades.get_record!(&1),
-      index_list_base: &SchoolApp.TeachersGrades.index_list_base/0,
+      changeset_fn: &changeset(&1, &2),
+      update_fn: &update_record(&1, &2),
+      create_fn: &create(&1),
+      delete_fn: &delete(&1),
+      get_rec_fn: &get_record!(&1),
       schema: %SchoolApp.Database.TeacherGrade{},
+      index_list_base: &index_list_base/0,
       index_cols: [:grade_name],
       edit_kind: :uneditable,
       form_cols: [
@@ -52,7 +52,7 @@ defmodule SchoolApp.TeachersGrades do
     TeacherGrade.changeset(record, attrs)
   end
 
-  def update(%TeacherGrade{} = record, attrs) do
+  def update_record(%TeacherGrade{} = record, attrs) do
     record
     |> TeacherGrade.changeset(attrs)
     |> Repo.update()

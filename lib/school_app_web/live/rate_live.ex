@@ -55,9 +55,9 @@ defmodule SchoolAppWeb.RateLive do
             <div class="flex gap-2">
               <div class="w-1/2">
                 <CustomComponents.input_grade
-                  on_change="grade-change"
                   grade_id={@options.grade_id}
                   grade_list={@grade_list}
+                  on_change="grade-change"
                 />
               </div>
               
