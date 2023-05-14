@@ -5,6 +5,8 @@ defmodule SchoolAppWeb.IndexComponent do
   alias SchoolApp.Repo
 
   def mount(socket) do
+    IO.inspect("========================== mount index  ========================")
+
     socket =
       assign(socket,
         count: 0,
@@ -15,18 +17,23 @@ defmodule SchoolAppWeb.IndexComponent do
         parent_id: 0,
         parent_app: nil,
         parent_field: nil,
-        parent_descr: nil
+        parent_descr: nil,
+        filter: %{},
+        display_field_fn: nil
       )
 
     {:ok, socket, temporary_assigns: [records: []]}
   end
 
   def update(assigns, socket) do
+    IO.inspect("========================== update index  ========================")
+
     app_item = assigns.app_item
 
     socket =
       socket
       |> assign(assigns)
+      |> assign(page: 1)
       |> assign_records()
       |> assign(base_link: SchoolAppWeb.AppUtils.get_link(app_item))
       |> assign(cols: SchoolAppWeb.AppUtils.get_index_cols(app_item))
@@ -61,7 +68,7 @@ defmodule SchoolAppWeb.IndexComponent do
           live_action={@live_action}
         />
       </.modal>
-      
+    
       <div class="border border-gray-400 bg-sky-100 rounded h-full w-full">
         <div class="border-b rounded p-2">
           <.header>
@@ -69,12 +76,12 @@ defmodule SchoolAppWeb.IndexComponent do
               <div :for={icon <- AppUtils.get_icon(@app_item)} class="p-2">
                 <.icon name={icon} class="h-5 w-5" />
               </div>
-              
+    
               <div class="h-5 p-2">
                 <%= AppUtils.get_item_name(@app_item) %>
               </div>
             </div>
-            
+    
             <:actions>
               <div class="flex gap-1">
                 <.link patch={"#{@base_link}/new"}>
@@ -82,20 +89,20 @@ defmodule SchoolAppWeb.IndexComponent do
                     <.icon name="hero-plus-solid" class="h-5 w-5" />
                   </.button>
                 </.link>
-                
+    
                 <div :if={@count > 5}>
                   <.button phx-target={@myself} phx-click="first-page">
                     <.icon name="hero-chevron-double-left" class="h-5 w-5" />
                   </.button>
-                  
+    
                   <.button phx-target={@myself} phx-click="prior-page">
                     <.icon name="hero-chevron-left" class="h-5 w-5" />
                   </.button>
-                  
+    
                   <.button phx-target={@myself} phx-click="next-page">
                     <.icon name="hero-chevron-right" class="h-5 w-5" />
                   </.button>
-                  
+    
                   <.button phx-target={@myself} phx-click="last-page">
                     <.icon name="hero-chevron-double-right" class="h-5 w-5" />
                   </.button>
@@ -105,23 +112,28 @@ defmodule SchoolAppWeb.IndexComponent do
           </.header>
         </div>
       </div>
-      
+    
       <div class="border border-gray-400 bg-white rounded h-full w-full" id={"#{@app_item}-Records"}>
         <div :for={register <- @records} id={"#{@app_item}-#{register.id}"}>
-          <div class="border-b rounded flex ">
-            <div :for={col <- @cols} class="p-2 font-bold border w-full">
-              <%= Map.get(register, col) %>
-            </div>
-            
-            <div class="grid w-36 justify-items-end p-1">
-              <div>
+          <div class="border-b rounded flex">
+            <%= for col <- @cols do %>
+              <%= show_field(@display_field_fn, register, col) %>
+            <% end %>
+    
+            <div class="justify-items-end w-36 items-center flex p-1">
+              <div class="justify-items-end w-full">
                 <%= render_slot(@buttons) %>
+              </div>
+    
+              <div class="">
                 <.link :if={@edit_kind == :editable} patch={"#{@base_link}/#{register.id}/edit"}>
                   <.button>
                     <.icon name="hero-pencil-square" class="h-5 w-5" />
                   </.button>
                 </.link>
-                
+              </div>
+    
+              <div class="">
                 <.link
                   phx-target={@myself}
                   phx-click={JS.push("delete", value: %{id: register.id})}
@@ -136,7 +148,7 @@ defmodule SchoolAppWeb.IndexComponent do
           </div>
         </div>
       </div>
-       <%!-- <pre><%= inspect assigns, pretty: true %></pre> --%>
+       <%!-- <pre><%= inspect [@page, @max_page, @count], pretty: true %></pre> --%>
     </div>
     """
   end
@@ -220,34 +232,44 @@ defmodule SchoolAppWeb.IndexComponent do
     |> assign(:record, rec)
   end
 
-  def get_filter_parent(_socket, nil), do: %{}
+  def get_filter_parent(_socket, filter, nil), do: filter
 
-  def get_filter_parent(socket, parent_field) do
+  def get_filter_parent(socket, filter, parent_field) do
     filter_parent(
+      filter,
       parent_field,
       socket.assigns.parent_id
     )
   end
 
-  def filter_parent(parent_field, :new), do: filter_parent(parent_field, 0)
-  def filter_parent(parent_field, parent_id), do: Map.put(%{}, parent_field, parent_id)
+  def filter_parent(filter, parent_field, :new), do: filter_parent(filter, parent_field, 0)
+  def filter_parent(filter, parent_field, parent_id), do: Map.put(filter, parent_field, parent_id)
 
   def assign_records(socket) do
-    IO.inspect("========================== assign_records ========================")
+    # IO.inspect("========================== assign_records ========================")
     app_item = socket.assigns.app_item
     table = AppUtils.get_table(app_item)
-    filter = get_filter_parent(socket, socket.assigns.parent_field)
+    filter = socket.assigns.filter
+    filter = get_filter_parent(socket, filter, socket.assigns.parent_field)
     count = SchoolApp.QueryUtils.get_count(table, filter)
     page = socket.assigns.page
     per_page = socket.assigns.per_page
     max_page = trunc(Float.ceil(count / per_page))
     records = get_records(socket, app_item, page, per_page)
+    records = get_empty_records(records)
+    # IO.inspect(records)
 
     socket
     |> assign(max_page: max_page)
     |> assign(records: records)
     |> assign(count: count)
   end
+
+  defp get_empty_records([]) do
+    [%{id: 0, name: ""}]
+  end
+
+  defp get_empty_records(records), do: records
 
   def get_records(socket, app_item, page, per_page) do
     qybase_function = AppUtils.get_index_list_base(app_item)
@@ -261,7 +283,8 @@ defmodule SchoolAppWeb.IndexComponent do
   def filter_query_base(socket, app_item, nil) do
     table = AppUtils.get_table(app_item)
     fields = AppUtils.get_list_fields(app_item)
-    filter = get_filter_parent(socket, socket.assigns.parent_field)
+    filter = socket.assigns.filter
+    filter = get_filter_parent(socket, filter, socket.assigns.parent_field)
     sort_field = AppUtils.get_sort_field(app_item)
 
     QueryUtils.query(table, fields, filter)
@@ -270,8 +293,30 @@ defmodule SchoolAppWeb.IndexComponent do
 
   def filter_query_base(socket, _app_item, qybase_function) do
     qybase = qybase_function.()
-    filter = get_filter_parent(socket, socket.assigns.parent_field)
+    filter = socket.assigns.filter
+    filter = get_filter_parent(socket, filter, socket.assigns.parent_field)
     QueryUtils.apply_filter(qybase, filter)
+  end
+
+  defp show_field(display_field_fn, register, col) do
+    dado = Map.get(register, col)
+    get_display_field(display_field_fn, register, col, dado)
+  end
+
+  defp get_display_field(nil, _, _, dado) do
+    assigns = %{dado: dado}
+
+    ~H"""
+    <div class="p-2 font-bold border w-full items-center flex">
+      <div>
+        <%= @dado %>
+      </div>
+    </div>
+    """
+  end
+
+  defp get_display_field(display_field_fn, register, col, dado) do
+    display_field_fn.(register, col, dado)
   end
 end
 

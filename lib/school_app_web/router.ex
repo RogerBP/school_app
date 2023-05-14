@@ -65,6 +65,7 @@ defmodule SchoolAppWeb.Router do
     live("/students", StudentLive, :index)
     live("/students/new", StudentLive, :new)
     live("/students/:id/edit", StudentLive, :edit)
+    live("/students/:id/avatar", StudentAvatarLive)
 
     # live("/students_domains", StudentDomainLive, :index)
     # live("/students_domains/new", StudentDomainLive, :new)

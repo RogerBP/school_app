@@ -3,13 +3,17 @@ defmodule SchoolAppWeb.CustomComponents do
   import SchoolAppWeb.CoreComponents
   alias Faker
 
-  def link_button(assigns) do
+  def panel(assigns) do
     ~H"""
-    <.link
-      navigate={@link}
-      class="flex p-1 border border-black rounded bg-sky-100
-          hover:bg-sky-200"
-    >
+    <div class="flex border border-black rounded bg-sky-100 hover:bg-sky-200 w-full">
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  def panel_header(assigns) do
+    ~H"""
+    <.panel>
       <div :for={icon <- @icon} class="p-2">
         <.icon name={icon} class="h-5 w-5" />
       </div>
@@ -17,13 +21,33 @@ defmodule SchoolAppWeb.CustomComponents do
       <div class="p-2 font-bold font-sans">
         <%= render_slot(@inner_block) %>
       </div>
+    </.panel>
+    """
+  end
+
+  attr(:link, :string, default: "")
+  attr(:icon, :list, default: [])
+  slot(:inner_block, required: false)
+
+  def link_button(assigns) do
+    ~H"""
+    <.link navigate={@link} class="flex p-1">
+      <.panel>
+        <div :for={icon <- @icon} class="p-2">
+          <.icon name={icon} class="h-5 w-5" />
+        </div>
+        
+        <div class="p-2 font-bold font-sans">
+          <%= render_slot(@inner_block) %>
+        </div>
+      </.panel>
     </.link>
     """
   end
 
-  attr :date_start, :string, default: ""
-  attr :date_end, :string, default: ""
-  attr :on_change, :string, default: ""
+  attr(:date_start, :string, default: "")
+  attr(:date_end, :string, default: "")
+  attr(:on_change, :string, default: "")
 
   def input_dates(assigns) do
     ~H"""
@@ -103,26 +127,28 @@ defmodule SchoolAppWeb.CustomComponents do
     """
   end
 
-  attr :grade_id, :string, default: "0"
-  attr :grade_list, :list, default: []
-  attr :on_change, :string, default: ""
+  attr(:grade_id, :string, default: "0")
+  attr(:grade_list, :list, default: [])
+  attr(:on_change, :string, default: "")
 
   def input_grade(assigns) do
     ~H"""
-    <.input
-      type="select"
-      name="grade_id"
-      value={@grade_id}
-      label="Grade"
-      options={[any: 0] ++ @grade_list}
-      phx-change={@on_change}
-    />
+    <div class="p-2">
+      <.input
+        type="select"
+        name="grade_id"
+        value={@grade_id}
+        label="Grade"
+        options={[any: 0] ++ @grade_list}
+        phx-change={@on_change}
+      />
+    </div>
     """
   end
 
-  attr :class_id, :string, default: "0"
-  attr :class_list, :list, default: []
-  attr :on_change, :string, default: ""
+  attr(:class_id, :string, default: "0")
+  attr(:class_list, :list, default: [])
+  attr(:on_change, :string, default: "")
 
   def input_class(assigns) do
     ~H"""
@@ -137,14 +163,15 @@ defmodule SchoolAppWeb.CustomComponents do
     """
   end
 
-  attr :avatar, :string, default: ""
-  attr :name, :string, default: ""
-  attr :on_click, :string, default: ""
-  attr :click_value, :string, default: ""
+  attr(:avatar, :string, default: "")
+  attr(:name, :string, default: "")
+  attr(:on_click, :string, default: "")
+  attr(:click_value, :string, default: "")
 
   def mini_card(assigns) do
     ~H"""
-    <div class="w-24 h-32 bg-slate-100 shadow border flex flex-wrap items-center justify-center text-center rounded">
+    <div class="w-24 h-32 bg-slate-100 shadow border flex flex-wrap
+                items-center justify-center text-center rounded">
       <img
         phx-value-data={@click_value}
         phx-click={@on_click}
@@ -158,19 +185,23 @@ defmodule SchoolAppWeb.CustomComponents do
     """
   end
 
+  def card(assigns) do
+    ~H"""
+    <div class="flex w-full items-center p-4
+                bg-slate-100 shadow border
+                rounded">
+      <img class="w-40 h-40 rounded-full" src={@avatar} />
+      <div class="p-4">
+        <p class="font-bold font-sans"><%= @name %></p>
+      </div>
+    </div>
+    """
+  end
+
   def avatar(assigns) do
     ~H"""
     <div class="flex items-center">
-      <img
-        class="w-10 h-10 rounded-full mr-4"
-        src={Faker.Avatar.image_url()}
-        alt="Avatar of Jonathan Reinink"
-      />
-      <div class="text-sm">
-        <p class="text-gray-900 leading-none">Jonathan Reinink</p>
-        
-        <p class="text-gray-600">Aug 18</p>
-      </div>
+      <img class="w-10 h-10 rounded-full mr-4" src={@avatar} />
     </div>
     """
   end
