@@ -25,12 +25,12 @@ defmodule SchoolApp.Db do
   end
 
   def student_list(teacher_id, class_id, grade_id) do
-    from(s in SchoolApp.Database.Student,
-      join: tg in TeacherGrade,
+    from(s in "students",
+      join: tg in "teachers_grades",
       on: s.grade_id == tg.grade_id,
-      join: tc in TeacherClass,
+      join: tc in "teachers_classes",
       on: tg.teacher_id == tc.teacher_id,
-      join: cg in ClassGrade,
+      join: cg in "classes_grades",
       on: cg.class_id == tc.class_id and cg.grade_id == tg.grade_id,
       select: %{id: s.id, name: s.name, avatar: s.avatar}
     )
@@ -56,24 +56,21 @@ defmodule SchoolApp.Db do
     do: from([s, tg, tc, cg] in qy, where: tg.grade_id == ^grade_id)
 
   def domains_by_student(student_id) do
-    from(sd in SchoolApp.Database.StudentDomain,
-      join: d in Domain,
-      on: d.id == sd.domain_id,
+    from(sd in "students_goals",
+      join: g in "goals",
+      on: g.id == sd.goal_id,
+      join: d in "domains",
+      on: d.id == g.domain_id,
       select: %{id: d.id, name: d.name},
-      where: sd.student_id == ^student_id
+      where: sd.student_id == ^student_id,
+      distinct: true
     )
     |> Repo.all()
   end
 
-  # select b.id, b.name, a.student_id
-  # from students_goals a, goals b
-  # where b.id = a.goal_id
-  # and b.domain_id = 2
-  # and a.student_id = 319
-
   def goals_by_student_domain(student_id, domain_id) do
-    from(sg in SchoolApp.Database.StudentGoal,
-      join: g in Goal,
+    from(sg in "students_goals",
+      join: g in "goals",
       on: g.id == sg.goal_id,
       select: %{id: g.id, name: g.name},
       where:

@@ -87,6 +87,7 @@ defmodule SchoolAppWeb.CustomComponents do
       value={@teacher_id}
       label="Teacher"
       options={[any: 0] ++ @teacher_list}
+      phx-change={@on_change}
     />
     """
   end
@@ -152,14 +153,16 @@ defmodule SchoolAppWeb.CustomComponents do
 
   def input_class(assigns) do
     ~H"""
-    <.input
-      type="select"
-      name="class_id"
-      value={@class_id}
-      label="Class"
-      options={[any: 0] ++ @class_list}
-      phx-change={@on_change}
-    />
+    <div class="p-2">
+      <.input
+        type="select"
+        name="class_id"
+        value={@class_id}
+        label="Class"
+        options={[any: 0] ++ @class_list}
+        phx-change={@on_change}
+      />
+    </div>
     """
   end
 
@@ -167,6 +170,7 @@ defmodule SchoolAppWeb.CustomComponents do
   attr(:name, :string, default: "")
   attr(:on_click, :string, default: "")
   attr(:click_value, :string, default: "")
+  slot(:inner_block, required: false)
 
   def mini_card(assigns) do
     ~H"""

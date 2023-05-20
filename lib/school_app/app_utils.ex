@@ -19,7 +19,7 @@ defmodule SchoolAppWeb.AppUtils do
       SchoolApp.StudentsGoals.app_item_config(),
       %{
         id: :assessments,
-        link: ~p"/",
+        link: ~p"/rate",
         icon: ["hero-adjustments-vertical"],
         name: "Assessments"
       },
