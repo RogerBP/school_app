@@ -1,17 +1,19 @@
 defmodule SchoolAppWeb.GraphsLive do
   use SchoolAppWeb, :live_view
-  # alias SchoolAppWeb.CustomComponents
+  alias SchoolAppWeb.CustomComponents
+  alias SchoolApp.DbWeb
 
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
         options: get_options(%{}),
         chart_data: nil,
-        grade_list: grade_list(0),
-        class_list: class_list(0),
+        teacher_list: DbWeb.teacher_list(),
+        grade_list: [],
+        class_list: [],
+        goal_list: [],
         student_list: [],
-        goal_list: goal_list(0),
-        chartted: false
+        charted: false
       )
 
     {:ok, socket, temporary_assigns: [chart_data: nil]}
@@ -21,7 +23,6 @@ defmodule SchoolAppWeb.GraphsLive do
     ~H"""
     <.header>Charts</.header>
 
-    <%!--
     <form phx-submit="submit-graph" phx-change="change-graph">
       <div class="rounded border p-4 grid gap-y-1 grid-cols-1">
         <CustomComponents.input_dates
@@ -33,21 +34,21 @@ defmodule SchoolAppWeb.GraphsLive do
           <div class="w-full">
             <CustomComponents.input_teacher
               teacher_id={@options.teacher_id}
-              teacher_list={teacher_list_options()}
+              teacher_list={@teacher_list}
             />
           </div>
         </div>
-    
+        
         <div class="flex gap-2">
           <div class="w-1/2">
             <CustomComponents.input_grade grade_id={@options.grade_id} grade_list={@grade_list} />
           </div>
-    
+          
           <div class="w-1/2">
             <CustomComponents.input_class class_id={@options.class_id} class_list={@class_list} />
           </div>
         </div>
-    
+        
         <div class="flex gap-2">
           <div class="w-1/2">
             <CustomComponents.input_student
@@ -55,46 +56,134 @@ defmodule SchoolAppWeb.GraphsLive do
               student_list={@student_list}
             />
           </div>
-    
+          
           <div class="w-1/2">
             <CustomComponents.input_goal goal_id={@options.goal_id} goal_list={@goal_list} />
           </div>
         </div>
-    
+        
         <div>
           <.button>Execute</.button>
         </div>
       </div>
     </form>
-    
+
     <div id="assessments" class="assessments">
       <div :if={@chart_data} phx-update="ignore" id="div-canvas">
         <canvas id="chart-canvas" phx-hook="LineChart" data-chart-data={Jason.encode!(@chart_data)}>
         </canvas>
       </div>
-    </div> --%>
+    </div>
+     <%!-- <pre><%= inspect %{charted: @charted}, pretty: true %></pre> --%>
     """
   end
 
-  def send_chart_data(socket, chart_data, false), do: assign(socket, chart_data: chart_data)
+  def send_chart_data(socket, chart_data, false) do
+    IO.puts("==============> send_chart_data(socket, chart_data, false) ")
+    IO.inspect(chart_data)
+    IO.puts("===================><===================")
+    assign(socket, chart_data: chart_data)
+  end
 
   def send_chart_data(socket, chart_data, true) do
-    IO.puts("==============> send_chart_data(socket, chart_data, _) ")
-    push_event(socket, "load_data", chart_data)
+    IO.puts("==============> send_chart_data(socket, chart_data, true) ")
+    IO.inspect(chart_data)
+    IO.puts("===================><===================")
+    # assign(socket, chart_data: [1, 2])
+    push_event(socket, "load-data", %{chart_data: chart_data})
+  end
+
+  defp next({:error, socket}, _socket_fn), do: {:error, socket}
+
+  defp next({:ok, socket}, socket_fn) do
+    socket_fn.(socket)
+  end
+
+  defp check_date(socket, date, msg_error) do
+    {error_flag, _} = Timex.parse(date, "{YYYY}-{M}-{D}")
+    socket = put_error(socket, error_flag, msg_error)
+    {error_flag, socket}
+  end
+
+  defp put_error(socket, :ok, _), do: socket
+  defp put_error(socket, :error, msg), do: put_flash(socket, :error, msg)
+
+  defp check_date_start(socket) do
+    check_date(socket, socket.assigns.options.date_start, "Initial date is invalid")
+  end
+
+  defp check_date_end(socket) do
+    check_date(socket, socket.assigns.options.date_end, "Final date is invalid")
+  end
+
+  defp check_zero(socket, 0, msg_error) do
+    socket = put_error(socket, :error, msg_error)
+    {:error, socket}
+  end
+
+  defp check_zero(socket, _, _), do: {:ok, socket}
+
+  defp check_student(socket) do
+    check_zero(socket, socket.assigns.options.student_id, "Student is invalid")
+  end
+
+  defp check_goal(socket) do
+    check_zero(socket, socket.assigns.options.goal_id, "Goal is invalid")
+  end
+
+  defp load_chart_data(socket) do
+    options = socket.assigns.options
+    charted = socket.assigns.charted
+    chart_data = SchoolApp.Graph.load_dataset(options)
+    socket = send_chart_data(socket, chart_data, charted)
+    {:ok, socket}
+  end
+
+  defp load_charted(socket) do
+    socket = assign(socket, charted: true)
+    {:ok, socket}
   end
 
   def handle_event("submit-graph", params, socket) do
-    chartted = socket.assigns.chartted
+    IO.inspect("==============> submit-graph <================ ")
     options = get_options(params)
 
-    # {:ok, date_start} = Timex.parse(options.date_start, "{YYYY}-{M}-{D}")
-    # {:ok, date_end} = Timex.parse(options.date_end, "{YYYY}-{M}-{D}")
+    # options = %{
+    #   class_id: 0,
+    #   date_start: "2022-06-01",
+    #   date_end: "2022-12-31",
+    #   goal_id: 3,
+    #   grade_id: 8,
+    #   student_id: 339,
+    #   teacher_id: 24
+    # }
 
-    chart_data = SchoolApp.GraphUtils.load_dataset(options)
-    socket = assign(socket, options: options)
-    socket = send_chart_data(socket, chart_data, chartted)
-    socket = assign(socket, chartted: true)
+    IO.inspect(options)
 
+    # %{
+    #   class_id: 0,
+    #   date_end: "2023-05-21",
+    #   date_start: "2023-05-01",
+    #   goal_id: 0,
+    #   grade_id: 0,
+    #   student_id: 0,
+    #   teacher_id: 0
+    # }
+
+    socket =
+      assign(socket, options: options)
+      |> clear_flash(:error)
+      |> clear_flash(:info)
+
+    socket_info =
+      next({:ok, socket}, &check_date_start/1)
+      |> next(&check_date_end/1)
+      |> next(&check_student/1)
+      |> next(&check_goal/1)
+      |> next(&load_chart_data/1)
+      |> next(&load_charted/1)
+
+    {_, socket} = socket_info
     {:noreply, socket}
   end
 
@@ -152,16 +241,10 @@ defmodule SchoolAppWeb.GraphsLive do
     socket
   end
 
-  # defp teacher_list_options do
-  #   SchoolApp.Teachers.list()
-  #   |> Enum.sort(&(&1.name <= &2.name))
-  #   |> Enum.map(&{&1.name, &1.id})
-  # end
-
   defp grade_list(0) do
     SchoolApp.Grades.list()
     |> Enum.sort(&(&1.id <= &2.id))
-    |> Enum.map(&{&1.name, &1.id})
+    |> SchoolApp.WebUtils.select_list()
   end
 
   defp grade_list(teacher_id) do
@@ -188,14 +271,14 @@ defmodule SchoolAppWeb.GraphsLive do
     |> Enum.map(&{&1.class.code, &1.class.id})
   end
 
-  defp student_list(_teacher_id, _class_id, _grade_id) do
-    # SchoolApp.Students.list(%{
-    #   teacher_id: teacher_id,
-    #   lass_id: class_id,
-    #   grade_id: grade_id
-    # })
-    # |> Enum.sort(&(&1.name <= &2.name))
-    # |> Enum.map(&{&1.name, &1.id})
+  defp student_list(teacher_id, class_id, grade_id) do
+    IO.puts("========> student_list <============")
+
+    SchoolApp.Students.list(%{
+      grade_id: grade_id
+    })
+    |> Enum.sort(&(&1.name <= &2.name))
+    |> Enum.map(&{&1.name, &1.id})
   end
 
   defp goal_list(0) do

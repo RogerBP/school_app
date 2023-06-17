@@ -45,13 +45,11 @@ defmodule SchoolAppWeb.StudentLive do
   def render(assigns) do
     ~H"""
     <form>
-      <CustomComponents.panel>
-        <CustomComponents.input_grade
-          grade_list={@grade_list}
-          grade_id={@grade_id}
-          on_change="filter_grade"
-        />
-      </CustomComponents.panel>
+      <CustomComponents.input_grade
+        grade_list={@grade_list}
+        grade_id={@grade_id}
+        on_change="filter_grade"
+      />
     </form>
 
     <.live_component
