@@ -271,7 +271,7 @@ defmodule SchoolAppWeb.GraphsLive do
     |> Enum.map(&{&1.class.code, &1.class.id})
   end
 
-  defp student_list(teacher_id, class_id, grade_id) do
+  defp student_list(_teacher_id, _class_id, grade_id) do
     IO.puts("========> student_list <============")
 
     SchoolApp.Students.list(%{
