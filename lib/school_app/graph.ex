@@ -1,4 +1,4 @@
-defmodule SchoolApp.GraphUtils do
+defmodule SchoolApp.Graph do
   import Ecto.Query, warn: false
   alias SchoolApp.Repo
   alias SchoolApp.Utils
@@ -76,9 +76,11 @@ defmodule SchoolApp.GraphUtils do
   end
 
   def load_dataset(graph_params) do
+    IO.inspect("==============> load_dataset <================ ")
     data = get_data_graph(graph_params)
     goals = get_goals_from_graph_data(data)
     datasets = get_dataset_from_graph_data(data, goals)
+
     labels = load_labels_from_datasets(datasets)
     datasets = normalize_datasets(datasets, labels)
     labels = Enum.map(labels, & &1.day)

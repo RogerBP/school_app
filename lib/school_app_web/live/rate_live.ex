@@ -30,19 +30,12 @@ defmodule SchoolAppWeb.RateLive do
         student_list: []
       )
 
-    # if connected?(socket) do
-    #   socket = load_teacher(socket)
-    #   {:ok, socket, temporary_assigns: [student_list: []]}
-    # else
-    #   {:ok, socket, temporary_assigns: [student_list: []]}
-    # end
-
-    {:ok, socket}
+    {:ok, socket, temporary_assigns: [student_list: []]}
   end
 
   def render(assigns) do
     ~H"""
-    <.header>Rating</.header>
+    <CustomComponents.panel_header icon={}>Assesments</CustomComponents.panel_header>
 
     <div class="w-full gap-1 flex flex-wrap">
       <div :if={!@options.selected_student} class="w-full rounded border p-2 flex gap-2 bg-slate-200">
@@ -54,7 +47,7 @@ defmodule SchoolAppWeb.RateLive do
           </div>
         </div>
         
-        <div :if={length(@teacher_list) > 0}>
+        <div :if={length(@teacher_list) > 0} class="w-full">
           <form>
             <CustomComponents.input_teacher
               teacher_id={@options.teacher_id}

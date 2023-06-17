@@ -11,6 +11,9 @@ defmodule SchoolAppWeb.CustomComponents do
     """
   end
 
+  attr(:icon, :list, default: [])
+  slot(:inner_block, required: false)
+
   def panel_header(assigns) do
     ~H"""
     <.panel>
@@ -51,80 +54,104 @@ defmodule SchoolAppWeb.CustomComponents do
 
   def input_dates(assigns) do
     ~H"""
-    <div class="flex gap-2">
-      <div class="w-1/2">
-        <.input
-          type="date"
-          phx-debounce="blur"
-          name="date_start"
-          value={@date_start}
-          placeholder="Initial date"
-          label="Initial date"
-          phx-change={@on_change}
-        />
+    <.panel>
+      <div class="p-2  w-full">
+        <div class="flex gap-2">
+          <div class="w-1/2">
+            <.input
+              type="date"
+              phx-debounce="blur"
+              name="date_start"
+              value={@date_start}
+              placeholder="Initial date"
+              label="Initial date"
+              phx-change={@on_change}
+            />
+          </div>
+          
+          <div class="w-1/2">
+            <.input
+              type="date"
+              phx-debounce="blur"
+              name="date_end"
+              value={@date_end}
+              placeholder="Final date"
+              label="Final date"
+              phx-change={@on_change}
+            />
+          </div>
+        </div>
       </div>
-      
-      <div class="w-1/2">
-        <.input
-          type="date"
-          phx-debounce="blur"
-          name="date_end"
-          value={@date_end}
-          placeholder="Final date"
-          label="Final date"
-          phx-change={@on_change}
-        />
-      </div>
-    </div>
+    </.panel>
     """
   end
 
+  attr(:teacher_id, :string, default: "0")
+  attr(:teacher_list, :list, default: [])
+  attr(:on_change, :string, default: "")
+
   def input_teacher(assigns) do
     ~H"""
-    <.input
-      type="select"
-      name="teacher_id"
-      value={@teacher_id}
-      label="Teacher"
-      options={[any: 0] ++ @teacher_list}
-      phx-change={@on_change}
-    />
+    <.panel>
+      <div class="p-2  w-full">
+        <.input
+          type="select"
+          name="teacher_id"
+          value={@teacher_id}
+          label="Teacher"
+          options={[any: 0] ++ @teacher_list}
+          phx-change={@on_change}
+        />
+      </div>
+    </.panel>
     """
   end
 
   def input_goal(assigns) do
     ~H"""
-    <.input
-      type="select"
-      name="goal_id"
-      value={@goal_id}
-      label="Goal"
-      options={[none: 0] ++ @goal_list}
-    />
+    <.panel>
+      <div class="p-2  w-full">
+        <.input
+          type="select"
+          name="goal_id"
+          value={@goal_id}
+          label="Goal"
+          options={[none: 0] ++ @goal_list}
+        />
+      </div>
+    </.panel>
     """
   end
 
   def input_domain(assigns) do
     ~H"""
-    <.input
-      type="select"
-      name="domain_id"
-      value={@domain_id}
-      label="Domain"
-      options={[none: 0] ++ @domain_list}
-    />
+    <.panel>
+      <div class="p-2  w-full">
+        <.input
+          type="select"
+          name="domain_id"
+          value={@domain_id}
+          label="Domain"
+          options={[none: 0] ++ @domain_list}
+        />
+      </div>
+    </.panel>
     """
   end
 
   def input_student(assigns) do
     ~H"""
-    <.input
-      type="select"
-      name="student_id"
-      value={@student_id}
-      label="Student"
-      options={[none: 0] ++ @student_list}
-    />
+    <.panel>
+      <div class="p-2  w-full">
+        <.input
+          type="select"
+          name="student_id"
+          value={@student_id}
+          label="Student"
+          options={[none: 0] ++ @student_list}
+        />
+      </div>
+    </.panel>
     """
   end
 
@@ -134,16 +161,18 @@ defmodule SchoolAppWeb.CustomComponents do
 
   def input_grade(assigns) do
     ~H"""
-    <div class="p-2">
-      <.input
-        type="select"
-        name="grade_id"
-        value={@grade_id}
-        label="Grade"
-        options={[any: 0] ++ @grade_list}
-        phx-change={@on_change}
-      />
-    </div>
+    <.panel>
+      <div class="p-2  w-full">
+        <.input
+          type="select"
+          name="grade_id"
+          value={@grade_id}
+          label="Grade"
+          options={[any: 0] ++ @grade_list}
+          phx-change={@on_change}
+        />
+      </div>
+    </.panel>
     """
   end
 
@@ -153,16 +182,18 @@ defmodule SchoolAppWeb.CustomComponents do
 
   def input_class(assigns) do
     ~H"""
-    <div class="p-2">
-      <.input
-        type="select"
-        name="class_id"
-        value={@class_id}
-        label="Class"
-        options={[any: 0] ++ @class_list}
-        phx-change={@on_change}
-      />
-    </div>
+    <.panel>
+      <div class="p-2  w-full">
+        <.input
+          type="select"
+          name="class_id"
+          value={@class_id}
+          label="Class"
+          options={[any: 0] ++ @class_list}
+          phx-change={@on_change}
+        />
+      </div>
+    </.panel>
     """
   end
 

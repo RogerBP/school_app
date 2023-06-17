@@ -24,7 +24,7 @@ defmodule SchoolAppWeb.AppUtils do
         name: "Assessments"
       },
       %{
-        link: ~p"/",
+        link: ~p"/graphs",
         icon: ["hero-chart-bar"],
         name: "Charts",
         id: :charts

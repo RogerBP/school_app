@@ -12,6 +12,11 @@ defmodule SchoolApp.Students do
     Repo.all(qy)
   end
 
+  def list(filter) do
+    qy = QueryUtils.query(Student, [:id, :name], filter)
+    Repo.all(qy)
+  end
+
   def web_options_list do
     QueryUtils.query("students", [:id, :name])
     |> QueryUtils.sort(%{sort_by: :name, sort_order: :asc})
