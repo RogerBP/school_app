@@ -97,7 +97,7 @@ defmodule SchoolApp.Repo.Migrations.CreateDistrict do
              name: :classes_grades_grade_id_class_id_index
            )
 
-    teachers_classes (class, teacher)
+    # teachers_classes (class, teacher)
     create table(:teachers_classes) do
       add :teacher_id, references(:teachers, on_delete: :nothing)
       add :class_id, references(:classes, on_delete: :nothing)
