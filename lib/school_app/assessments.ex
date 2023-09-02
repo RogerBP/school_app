@@ -3,13 +3,13 @@ defmodule SchoolApp.Assessments do
   alias SchoolApp.Repo
   alias SchoolApp.Database.Assessment
 
-  def load_refs(assessments) do
-    Repo.preload(assessments, [:student, :teacher, :goal, :domain, :class, :grade])
-  end
+  # def load_refs(assessments) do
+  #   Repo.preload(assessments, [:student, :teacher, :goal, :domain, :class, :grade])
+  # end
 
-  def load_refs(assessments, refs) do
-    Repo.preload(assessments, refs)
-  end
+  # def load_refs(assessments, refs) do
+  #   Repo.preload(assessments, refs)
+  # end
 
   def get_by_id!(id), do: Repo.get!(Assessment, id)
 
@@ -36,47 +36,44 @@ defmodule SchoolApp.Assessments do
     qy =
       from sg in "students_goals",
         where: sg.student_id == ^student_id,
-        join: g in "goals",
-        on: g.id == sg.goal_id,
-        select: %{goal_id: sg.goal_id, domain_id: g.domain_id}
-
+        select: %{goal_id: sg.id, domain_id: sg.domain_id}
     Repo.all(qy)
   end
 
-  def create_fake(student_id, grade_id, date_range) do
-    # student_id = 316
-    # grade_id = 7
-    # date_range = Date.range(~D[2022-01-01], ~D[2022-12-31])
+  # def create_fake(student_id, grade_id, date_range) do
+  #   # student_id = 316
+  #   # grade_id = 7
+  #   # date_range = Date.range(~D[2022-01-01], ~D[2022-12-31])
 
-    goals = goals_from_student(student_id)
-    tc = teachers_classes_from_grade(grade_id)
+  #   goals = goals_from_student(student_id)
+  #   tc = teachers_classes_from_grade(grade_id)
 
-    rates =
-      for goal <- goals,
-          date <- date_range,
-          _ <- 1..5,
-          do:
-            Map.merge(
-              %{
-                student_id: student_id,
-                goal_id: goal.goal_id,
-                domain_id: goal.domain_id,
-                grade_id: grade_id,
-                value: Enum.random([-1, 0, 1]),
-                inserted_at:
-                  NaiveDateTime.new!(
-                    date,
-                    Time.new!(
-                      Enum.random(8..18),
-                      Enum.random(0..59),
-                      Enum.random(0..59),
-                      Enum.random(0..999_999)
-                    )
-                  )
-              },
-              Enum.random(tc)
-            )
+  #   rates =
+  #     for goal <- goals,
+  #         date <- date_range,
+  #         _ <- 1..5,
+  #         do:
+  #           Map.merge(
+  #             %{
+  #               student_id: student_id,
+  #               goal_id: goal.goal_id,
+  #               domain_id: goal.domain_id,
+  #               grade_id: grade_id,
+  #               value: Enum.random([-1, 0, 1]),
+  #               inserted_at:
+  #                 NaiveDateTime.new!(
+  #                   date,
+  #                   Time.new!(
+  #                     Enum.random(8..18),
+  #                     Enum.random(0..59),
+  #                     Enum.random(0..59),
+  #                     Enum.random(0..999_999)
+  #                   )
+  #                 )
+  #             },
+  #             Enum.random(tc)
+  #           )
 
-    for rate <- rates, do: create_assessment(rate)
-  end
+  #   for rate <- rates, do: create_assessment(rate)
+  # end
 end

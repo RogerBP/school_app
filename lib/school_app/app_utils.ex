@@ -13,7 +13,7 @@ defmodule SchoolAppWeb.AppUtils do
       SchoolApp.TeachersClasses.app_item_config(),
       SchoolApp.TeachersGrades.app_item_config(),
       SchoolApp.Domains.app_item_config(),
-      SchoolApp.Goals.app_item_config(),
+      # SchoolApp.Goals.app_item_config(),
       SchoolApp.Students.app_item_config(),
       # SchoolApp.StudentsDomains.app_item_config(),
       SchoolApp.StudentsGoals.app_item_config(),

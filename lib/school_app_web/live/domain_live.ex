@@ -6,17 +6,17 @@ defmodule SchoolAppWeb.DomainLive do
   @app_item :domains
 
   def mount(_params, _session, socket) do
-    link_cs = SchoolAppWeb.AppUtils.get_item(:goals)
+    # link_cs = SchoolAppWeb.AppUtils.get_item(:goals)
     link_sg = SchoolAppWeb.AppUtils.get_item(:students_goals)
 
     {:ok,
      socket
      |> assign(
-       link_cs: %{
-         link: link_cs.link,
-         icon: link_cs.icon,
-         name: link_cs.name
-       },
+      #  link_cs: %{
+      #    link: link_cs.link,
+      #    icon: link_cs.icon,
+      #    name: link_cs.name
+      #  },
        link_sg: %{
          link: link_sg.link,
          icon: link_sg.icon,
@@ -43,9 +43,9 @@ defmodule SchoolAppWeb.DomainLive do
     >
     </.live_component>
 
-    <CustomComponents.link_button link={@link_cs.link} icon={@link_cs.icon}>
+    <%!-- <CustomComponents.link_button link={@link_cs.link} icon={@link_cs.icon}>
       <%= @link_cs.name %>
-    </CustomComponents.link_button>
+    </CustomComponents.link_button> --%>
 
     <CustomComponents.link_button link={@link_sg.link} icon={@link_sg.icon}>
       <%= @link_sg.name %>

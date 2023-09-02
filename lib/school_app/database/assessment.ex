@@ -3,12 +3,18 @@ defmodule SchoolApp.Database.Assessment do
   import Ecto.Changeset
 
   schema "assessments" do
-    belongs_to :student, SchoolApp.Database.Student
-    belongs_to :teacher, SchoolApp.Database.Teacher
-    belongs_to :goal, SchoolApp.Database.Goal
-    belongs_to :domain, SchoolApp.Database.Domain
-    belongs_to :class, SchoolApp.Database.Class
-    belongs_to :grade, SchoolApp.Database.Grade
+    # belongs_to :student, SchoolApp.Database.Student
+    # belongs_to :teacher, SchoolApp.Database.Teacher
+    # belongs_to :student_goal, SchoolApp.Database.Goal
+    # belongs_to :domain, SchoolApp.Database.Domain
+    # belongs_to :class, SchoolApp.Database.Class
+    # belongs_to :grade, SchoolApp.Database.Grade
+    field :student_id, :id
+    field :teacher_id, :id
+    field :student_goal_id, :id
+    field :domain_id, :id
+    field :class_id, :id
+    field :grade_id, :id
     field :value, :integer
 
     timestamps()
@@ -20,7 +26,7 @@ defmodule SchoolApp.Database.Assessment do
     |> cast(attrs, [
       :student_id,
       :teacher_id,
-      :goal_id,
+      :student_goal_id,
       :domain_id,
       :class_id,
       :grade_id,
@@ -30,7 +36,7 @@ defmodule SchoolApp.Database.Assessment do
     |> validate_required([
       :student_id,
       :teacher_id,
-      :goal_id,
+      :student_goal_id,
       :domain_id,
       :grade_id,
       :value

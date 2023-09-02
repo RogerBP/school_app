@@ -23,19 +23,10 @@ https://hexdocs.pm/ecto/constraints-and-upserts.html
   # Assessment (moment, student, class, grade, domain, goal, value)
 
 
-# SchoolApp / Divis�o dos trabalhos
-
-Designer                              => Mariana/Roger
-Web designer                          => Mariana/Roger
-Analista de negócios                  => Mariana
-Analista de sistemas                  => Roger
-Arquiteto de software                 => Roger
-Desenvolvedor/Programador             => Roger
-Analista de banco de dados            => Roger
-Analistas de testes (QA)              => Mariana
-Gerente de projetos ou coordenador    => Mariana
-Suporte                               => Phyerre/Adriana
 
 mix phx.new school_app
+mix phx.server => pra rodar o sistema
 mix phx.gen.live Schools School schools name:string
 mix ecto.gen.migration create_district
+mix ecto.migrate => Runs the pending migrations
+drop_if_exists index("posts", [:field_name]) => Remove tabela ou indice

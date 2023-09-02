@@ -9,7 +9,7 @@ defmodule SchoolAppWeb.StudentLive do
     grade_list = SchoolApp.Grades.web_options_list()
 
     link_sg = SchoolAppWeb.AppUtils.get_item(:students_goals)
-    link_goals = SchoolAppWeb.AppUtils.get_item(:goals)
+    link_domains = SchoolAppWeb.AppUtils.get_item(:domains)
 
     socket =
       assign(socket,
@@ -18,10 +18,10 @@ defmodule SchoolAppWeb.StudentLive do
           icon: link_sg.icon,
           name: link_sg.name
         },
-        link_goals: %{
-          link: link_goals.link,
-          icon: link_goals.icon,
-          name: link_goals.name
+        link_domains: %{
+          link: link_domains.link,
+          icon: link_domains.icon,
+          name: link_domains.name
         },
         grade_list: grade_list,
         grade_id: 0,
@@ -65,8 +65,8 @@ defmodule SchoolAppWeb.StudentLive do
     <CustomComponents.link_button link={@link_sg.link} icon={@link_sg.icon}>
       <%= @link_sg.name %>
     </CustomComponents.link_button>
-    <CustomComponents.link_button link={@link_goals.link} icon={@link_goals.icon}>
-      <%= @link_goals.name %>
+    <CustomComponents.link_button link={@link_domains.link} icon={@link_domains.icon}>
+      <%= @link_domains.name %>
     </CustomComponents.link_button>
     """
   end

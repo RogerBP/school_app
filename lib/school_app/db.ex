@@ -57,10 +57,8 @@ defmodule SchoolApp.Db do
 
   def domains_by_student(student_id) do
     from(sd in "students_goals",
-      join: g in "goals",
-      on: g.id == sd.goal_id,
       join: d in "domains",
-      on: d.id == g.domain_id,
+      on: d.id == sd.domain_id,
       select: %{id: d.id, name: d.name},
       where: sd.student_id == ^student_id,
       distinct: true
@@ -70,12 +68,10 @@ defmodule SchoolApp.Db do
 
   def goals_by_student_domain(student_id, domain_id) do
     from(sg in "students_goals",
-      join: g in "goals",
-      on: g.id == sg.goal_id,
-      select: %{id: g.id, name: g.name},
+      select: %{id: sg.id, name: sg.goal},
       where:
         sg.student_id == ^student_id and
-          g.domain_id == ^domain_id
+          sg.domain_id == ^domain_id
     )
     |> Repo.all()
   end

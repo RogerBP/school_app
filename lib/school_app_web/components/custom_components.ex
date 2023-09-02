@@ -17,10 +17,12 @@ defmodule SchoolAppWeb.CustomComponents do
   def panel_header(assigns) do
     ~H"""
     <.panel>
+    <div :if={@icon}>
       <div :for={icon <- @icon} class="p-2">
         <.icon name={icon} class="h-5 w-5" />
+        </div>
       </div>
-      
+
       <div class="p-2 font-bold font-sans">
         <%= render_slot(@inner_block) %>
       </div>
@@ -39,7 +41,7 @@ defmodule SchoolAppWeb.CustomComponents do
         <div :for={icon <- @icon} class="p-2">
           <.icon name={icon} class="h-5 w-5" />
         </div>
-        
+
         <div class="p-2 font-bold font-sans">
           <%= render_slot(@inner_block) %>
         </div>
@@ -68,7 +70,7 @@ defmodule SchoolAppWeb.CustomComponents do
               phx-change={@on_change}
             />
           </div>
-          
+
           <div class="w-1/2">
             <.input
               type="date"
@@ -249,7 +251,7 @@ defmodule SchoolAppWeb.CustomComponents do
         style="background-image: url(https://picsum.photos/640/480)"
       >
       </div>
-      
+
       <div class="border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
         <div class="mb-8">
           <p class="text-sm text-gray-600 flex items-center">
@@ -262,16 +264,16 @@ defmodule SchoolAppWeb.CustomComponents do
             </svg>
             Members only
           </p>
-          
+
           <div class="text-gray-900 font-bold text-xl mb-2">
             Can coffee make you a better developer?
           </div>
-          
+
           <p class="text-gray-700 text-base">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
           </p>
         </div>
-        
+
         <div class="flex items-center">
           <img
             class="w-10 h-10 rounded-full mr-4"
@@ -280,7 +282,7 @@ defmodule SchoolAppWeb.CustomComponents do
           />
           <div class="text-sm">
             <p class="text-gray-900 leading-none">Jonathan Reinink</p>
-            
+
             <p class="text-gray-600">Aug 18</p>
           </div>
         </div>
@@ -299,7 +301,7 @@ defmodule SchoolAppWeb.CustomComponents do
       />
       <div class="text-sm">
         <p class="text-gray-900 leading-none">Jonathan Reinink</p>
-        
+
         <p class="text-gray-600">Aug 18</p>
       </div>
     </div>

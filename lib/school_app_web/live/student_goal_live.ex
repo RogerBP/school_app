@@ -9,7 +9,7 @@ defmodule SchoolAppWeb.StudentGoalLive do
     parent_list = SchoolApp.Students.web_options_list()
     {parent_name, id} = hd(parent_list)
     link_st = SchoolAppWeb.AppUtils.get_item(:students)
-    link_goals = SchoolAppWeb.AppUtils.get_item(:goals)
+    link_domains = SchoolAppWeb.AppUtils.get_item(:domains)
 
     socket =
       assign(socket,
@@ -22,10 +22,10 @@ defmodule SchoolAppWeb.StudentGoalLive do
           icon: link_st.icon,
           name: link_st.name
         },
-        link_goals: %{
-          link: link_goals.link,
-          icon: link_goals.icon,
-          name: link_goals.name
+        link_domains: %{
+          link: link_domains.link,
+          icon: link_domains.icon,
+          name: link_domains.name
         }
       )
 
@@ -44,7 +44,7 @@ defmodule SchoolAppWeb.StudentGoalLive do
     <div class="border border-gray-400 bg-sky-100 rounded h-full w-full">
       <div class="border-b rounded p-2">
         <.header>Student</.header>
-        
+
         <.input
           phx-click="change_parent"
           type="select"
@@ -69,8 +69,8 @@ defmodule SchoolAppWeb.StudentGoalLive do
       <%= @link_st.name %>
     </CustomComponents.link_button>
 
-    <CustomComponents.link_button link={@link_goals.link} icon={@link_goals.icon}>
-      <%= @link_goals.name %>
+    <CustomComponents.link_button link={@link_domains.link} icon={@link_domains.icon}>
+      <%= @link_domains.name %>
     </CustomComponents.link_button>
      <%!-- <pre><%= inspect assigns, pretty: true %></pre> --%>
     """

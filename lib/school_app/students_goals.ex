@@ -19,14 +19,15 @@ defmodule SchoolApp.StudentsGoals do
       get_rec_fn: &get_record!(&1),
       schema: %StudentGoal{},
       index_list_base: &index_list_base/0,
-      index_cols: [:domain_name, :goal_name],
-      edit_kind: :uneditable,
+      index_cols: [:domain_name, :goal],
+      edit_kind: :editable,
       form_cols: [
+        %{fieldname: :goal, label: "Goal"},
         %{
-          fieldname: :goal_id,
-          label: "Goal",
+          fieldname: :domain_id,
+          label: "Domain",
           type: "select",
-          options_fn: &SchoolApp.Goals.web_options_list/0
+          options_fn: &SchoolApp.Domains.web_options_list/0
         }
       ]
     }
@@ -37,9 +38,9 @@ defmodule SchoolApp.StudentsGoals do
     |> Repo.all()
   end
 
-  def load_goals(list) do
-    Repo.preload(list, [:goal])
-  end
+  # def load_goals(list) do
+  #   Repo.preload(list, [:goal])
+  # end
 
   def query(filter) do
     qy = from(a in StudentGoal)
@@ -49,8 +50,8 @@ defmodule SchoolApp.StudentsGoals do
   defp filter_query({:student_id, student_id}, qy),
     do: from(q in qy, where: q.student_id == ^student_id)
 
-  defp filter_query({:goal_id, goal_id}, qy),
-    do: from(q in qy, where: q.goal_id == ^goal_id)
+  defp filter_query({:domain_id, domain_id}, qy),
+    do: from(q in qy, where: q.domain_id == ^domain_id)
 
   def create_student_goal(attrs \\ %{}) do
     %StudentGoal{}
@@ -82,17 +83,14 @@ defmodule SchoolApp.StudentsGoals do
 
   def index_list_base do
     from students_goals in "students_goals",
-      join: goals in "goals",
-      on: students_goals.goal_id == goals.id,
       join: domains in "domains",
-      on: goals.domain_id == domains.id,
+      on: students_goals.domain_id == domains.id,
       select: %{
         id: students_goals.id,
         student_id: students_goals.student_id,
-        goal_id: students_goals.goal_id,
-        goal_name: goals.name,
+        goal: students_goals.goal,
         domain_name: domains.name
       },
-      order_by: [domains.name, goals.name]
+      order_by: [domains.name, students_goals.goal]
   end
 end

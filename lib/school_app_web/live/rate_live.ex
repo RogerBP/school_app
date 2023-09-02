@@ -6,6 +6,8 @@ defmodule SchoolAppWeb.RateLive do
   # alias SchoolApp.Rate
 
   def mount(_params, _session, socket) do
+    link_ass = SchoolAppWeb.AppUtils.get_item(:assessments)
+
     options = %{
       teacher_id: 0,
       grade_id: 0,
@@ -27,7 +29,8 @@ defmodule SchoolAppWeb.RateLive do
         class_list: [],
         domain_list: [],
         goal_list: [],
-        student_list: []
+        student_list: [],
+        link_ass: link_ass
       )
 
     {:ok, socket, temporary_assigns: [student_list: []]}
@@ -35,18 +38,17 @@ defmodule SchoolAppWeb.RateLive do
 
   def render(assigns) do
     ~H"""
-    <CustomComponents.panel_header icon={}>Assesments</CustomComponents.panel_header>
-
+    <CustomComponents.panel_header icon={@link_ass.icon}>Assesments</CustomComponents.panel_header>
     <div class="w-full gap-1 flex flex-wrap">
       <div :if={!@options.selected_student} class="w-full rounded border p-2 flex gap-2 bg-slate-200">
         <div :if={length(@teacher_list) == 0}>
           <div class="">Teacher:</div>
-          
+
           <div :if={@selected_teacher} class="font-black">
             <%= @options.selected_teacher.name %>
           </div>
         </div>
-        
+
         <div :if={length(@teacher_list) > 0} class="w-full">
           <form>
             <CustomComponents.input_teacher
@@ -57,7 +59,7 @@ defmodule SchoolAppWeb.RateLive do
           </form>
         </div>
       </div>
-      
+
       <div :if={!@options.selected_student} class="w-full gap-1 flex flex-wrap">
         <div class="rounded border p-2 w-full bg-slate-200">
           <form>
@@ -69,7 +71,7 @@ defmodule SchoolAppWeb.RateLive do
                   grade_list={@grade_list}
                 />
               </div>
-              
+
               <div class="w-1/2">
                 <CustomComponents.input_class
                   on_change="class-change"
@@ -80,7 +82,7 @@ defmodule SchoolAppWeb.RateLive do
             </div>
           </form>
         </div>
-        
+
         <div
           :if={@options.student_count > 0}
           class="items-center justify-center p-4 w-full flex flex-wrap gap-1"
@@ -95,7 +97,7 @@ defmodule SchoolAppWeb.RateLive do
           </div>
         </div>
       </div>
-      
+
       <div :if={@options.selected_student} class="w-full flex ">
         <CustomComponents.mini_card
           on_click="avatar-return"
@@ -114,12 +116,12 @@ defmodule SchoolAppWeb.RateLive do
             <%= domain.name %>
           </button>
         </div>
-        
+
         <div :if={@selected_domain} class="w-full">
           <button class="w-full border rounded h-8 bg-slate-300 ">
             <%= @selected_domain.name %>
           </button>
-          
+
           <button
             :for={goal <- @goal_list}
             :if={!@selected_goal}
@@ -130,12 +132,12 @@ defmodule SchoolAppWeb.RateLive do
           >
             <%= goal.name %>
           </button>
-          
+
           <div :if={@selected_goal} class="w-full">
             <button class="w-full p-1 border rounded bg-orange-100">
               <%= @selected_goal.name %>
             </button>
-            
+
             <div class="justify-center w-full flex p-2 gap-4">
               <button
                 :if={@selected_rate_value in [-1, -999]}
@@ -145,7 +147,7 @@ defmodule SchoolAppWeb.RateLive do
               >
                 <.icon name="hero-hand-thumb-down" class="h-16 w-16 bg-red-500 hover:animate-bounce" />
               </button>
-              
+
               <button
                 :if={@selected_rate_value in [0, -999]}
                 phx-click={get_rate_click(@selected_rate_value)}
@@ -154,7 +156,7 @@ defmodule SchoolAppWeb.RateLive do
               >
                 <.icon name="hero-no-symbol" class="h-16 w-16 hover:animate-bounce" />
               </button>
-              
+
               <button
                 :if={@selected_rate_value in [1, -999]}
                 phx-click={get_rate_click(@selected_rate_value)}
@@ -167,11 +169,13 @@ defmodule SchoolAppWeb.RateLive do
           </div>
         </div>
       </div>
-      
-      <%!-- <pre>
-       <%= inspect @options.selected_student, pretty: true  %>
-       <%= inspect @domain_list, pretty: true  %>
-      </pre> --%>
+
+      <pre>
+        <%= inspect @options.selected_student, pretty: true  %>
+        <%= inspect @domain_list, pretty: true  %>
+        <%= inspect @goal_list, pretty: true  %>
+
+      </pre>
     </div>
     """
   end
@@ -203,7 +207,7 @@ defmodule SchoolAppWeb.RateLive do
 
     rate = %{
       student_id: options.selected_student.id,
-      goal_id: socket.assigns.selected_goal.id,
+      student_goal_id: socket.assigns.selected_goal.id,
       domain_id: socket.assigns.selected_domain.id,
       grade_id: options.selected_student.grade_id,
       teacher_id: options.teacher_id,

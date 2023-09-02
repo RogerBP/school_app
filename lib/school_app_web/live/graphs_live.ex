@@ -38,17 +38,17 @@ defmodule SchoolAppWeb.GraphsLive do
             />
           </div>
         </div>
-        
+
         <div class="flex gap-2">
           <div class="w-1/2">
             <CustomComponents.input_grade grade_id={@options.grade_id} grade_list={@grade_list} />
           </div>
-          
+
           <div class="w-1/2">
             <CustomComponents.input_class class_id={@options.class_id} class_list={@class_list} />
           </div>
         </div>
-        
+
         <div class="flex gap-2">
           <div class="w-1/2">
             <CustomComponents.input_student
@@ -56,12 +56,12 @@ defmodule SchoolAppWeb.GraphsLive do
               student_list={@student_list}
             />
           </div>
-          
+
           <div class="w-1/2">
             <CustomComponents.input_goal goal_id={@options.goal_id} goal_list={@goal_list} />
           </div>
         </div>
-        
+
         <div>
           <.button>Execute</.button>
         </div>
@@ -226,15 +226,15 @@ defmodule SchoolAppWeb.GraphsLive do
     )
   end
 
-  def change(socket, options, "student_id") do
-    options = %{options | goal_id: 0}
+  # def change(socket, options, "student_id") do
+  #   options = %{options | goal_id: 0}
 
-    assign(socket,
-      student_id: options.student_id,
-      goal_list: goal_list(options.student_id),
-      options: options
-    )
-  end
+  #   assign(socket,
+  #     student_id: options.student_id,
+  #     goal_list: goal_list(options.student_id),
+  #     options: options
+  #   )
+  # end
 
   def change(socket, _options, target) do
     IO.puts("==========> CHANGE IGNORADO: #{target}")
@@ -281,18 +281,18 @@ defmodule SchoolAppWeb.GraphsLive do
     |> Enum.map(&{&1.name, &1.id})
   end
 
-  defp goal_list(0) do
-    SchoolApp.Goals.list()
-    |> Enum.sort(&(&1.name <= &2.name))
-    |> Enum.map(&{&1.name, &1.id})
-  end
+  # defp goal_list(0) do
+  #   SchoolApp.Goals.list()
+  #   |> Enum.sort(&(&1.name <= &2.name))
+  #   |> Enum.map(&{&1.name, &1.id})
+  # end
 
-  defp goal_list(student_id) do
-    SchoolApp.StudentsGoals.list(%{student_id: student_id})
-    |> SchoolApp.StudentsGoals.load_goals()
-    |> Enum.sort(&(&1.goal.name <= &2.goal.name))
-    |> Enum.map(&{&1.goal.name, &1.goal_id})
-  end
+  # defp goal_list(student_id) do
+  #   SchoolApp.StudentsGoals.list(%{student_id: student_id})
+  #   |> SchoolApp.StudentsGoals.load_goals()
+  #   |> Enum.sort(&(&1.goal.name <= &2.goal.name))
+  #   |> Enum.map(&{&1.goal.name, &1.goal_id})
+  # end
 
   defp get_options(params) do
     # params

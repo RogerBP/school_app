@@ -58,9 +58,9 @@ defmodule SchoolAppWeb.Router do
     live("/domains/new", DomainLive, :new)
     live("/domains/:id/edit", DomainLive, :edit)
 
-    live("/goals", GoalLive, :index)
-    live("/goals/new", GoalLive, :new)
-    live("/goals/:id/edit", GoalLive, :edit)
+    # live("/goals", GoalLive, :index)
+    # live("/goals/new", GoalLive, :new)
+    # live("/goals/:id/edit", GoalLive, :edit)
 
     live("/students", StudentLive, :index)
     live("/students/new", StudentLive, :new)
@@ -72,6 +72,8 @@ defmodule SchoolAppWeb.Router do
 
     live("/students_goals", StudentGoalLive, :index)
     live("/students_goals/new", StudentGoalLive, :new)
+    live("/students_goals/:id/edit", StudentGoalLive, :edit)
+
   end
 
   # Other scopes may use custom stacks.

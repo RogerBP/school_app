@@ -3,8 +3,10 @@ defmodule SchoolApp.Database.StudentGoal do
   import Ecto.Changeset
 
   schema "students_goals" do
+    field :goal, :string
     belongs_to :student, SchoolApp.Database.Student
-    belongs_to :goal, SchoolApp.Database.Goal
+    belongs_to :domain, SchoolApp.Database.Domain
+    # belongs_to :goal, SchoolApp.Database.Goal
 
     timestamps()
   end
@@ -12,8 +14,8 @@ defmodule SchoolApp.Database.StudentGoal do
   @doc false
   def changeset(student_goal, attrs) do
     student_goal
-    |> cast(attrs, [:student_id, :goal_id])
-    |> unique_constraint([:student_id, :goal_id], name: :students_goals_student_id_goal_id_index)
-    |> validate_required([:student_id, :goal_id])
+    |> cast(attrs, [:goal, :student_id, :domain_id])
+    |> unique_constraint([:student_id, :domain_id, :goal], name: :students_goals_domain_goal_index)
+    |> validate_required([:student_id, :domain_id, :goal])
   end
 end
